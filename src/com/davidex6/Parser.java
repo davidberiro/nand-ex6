@@ -1,11 +1,7 @@
 package com.davidex6;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.Scanner;
 
 public class Parser {
@@ -25,15 +21,17 @@ public class Parser {
     }
 
     public boolean hasMoreCommands() {
-        // TODO: Think more complicated case where the next line might be a comment, etc.
-        this.skipCommentOrWhitespaceLines();
-        return this.scanner.hasNextLine();
+        this.readIntoCurrentLineSkippingWhitespaceAndCommentLines();
+        return this.currentLine != null;
     }
 
-    private void skipCommentOrWhitespaceLines() {
+    private void readIntoCurrentLineSkippingWhitespaceAndCommentLines() {
+        if (this.currentLine != null) {
+            return;
+        }
         while (this.scanner.hasNextLine()) {
             String line = this.scanner.nextLine();
-            boolean isCommentOrWhitespace = line.matches("^\\s*//") || line.matches("^\\s*$");
+            boolean isCommentOrWhitespace = line.matches("^\\s*//.*") || line.matches("^\\s*$");
             if (!isCommentOrWhitespace) {
                 this.currentLine = line;
                 break;
@@ -41,8 +39,10 @@ public class Parser {
         }
     }
 
+
     public void advance() {
-        this.currentLine = this.scanner.nextLine();
+        this.currentLine = null;
+        this.readIntoCurrentLineSkippingWhitespaceAndCommentLines();
     }
 
     public Command commandType() {

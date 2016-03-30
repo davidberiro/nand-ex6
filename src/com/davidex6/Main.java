@@ -15,7 +15,13 @@ public class Main {
 
     private static void testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine() throws FileNotFoundException {
         Parser parser = new Parser(new File(TEST_FILE_PATHS + "test-reading-file"));
-        System.out.println("Should have one command");
+        System.out.println("Test: Should have one command, repeatedly calling it does not affect the result");
+        assertTrue(parser.hasMoreCommands());
+        assertTrue(parser.hasMoreCommands());
+        assertTrue(parser.hasMoreCommands());
+        parser.advance();
+        assertTrue(parser.hasMoreCommands());
+        parser.advance();
         assertTrue(parser.hasMoreCommands());
         parser.advance();
         assertTrue(!parser.hasMoreCommands());
