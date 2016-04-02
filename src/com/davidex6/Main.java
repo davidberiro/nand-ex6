@@ -11,8 +11,12 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
+    
+    
     }
 
+    
+    
     private static void testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine() throws FileNotFoundException {
         Parser parser = new Parser(new File(TEST_FILE_PATHS + "test-reading-file"));
         System.out.println("Test: Should have one command, repeatedly calling it does not affect the result");
