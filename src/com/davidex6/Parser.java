@@ -14,14 +14,15 @@ public class Parser {
     };
 
     private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
-            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(\\s*)",
+            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(.*$)",
             EQUALS ="(^\\s*)(D|M|A)(=)(.+)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)", C_COMMAND_REGEX = EQUALS + "|" + JUMP;
 
     private static final Pattern A_COMMAND_PATTERN = Pattern.compile(A_COMMAND_REGEX),
             L_COMMAND_PATTERN = Pattern.compile(L_COMMAND_REGEX), C_COMMAND_PATTERN = Pattern.compile(C_COMMAND_REGEX),
             EQUAL_COMMAND_PATTERN = Pattern.compile(EQUALS), JUMP_COMMAND_PATTERN = Pattern.compile(JUMP);
 
-    private static final int A_COMMAND_SYMBOL_INDEX = 3, L_COMMAND_SYMBOL_INDEX = 3 ;
+    private static final int A_COMMAND_SYMBOL_INDEX = 3, L_COMMAND_SYMBOL_INDEX = 3, JUMP_INDEX = 4,
+                            JUMP_COMP_INDEX = 2, EQUALS_COMP_INDEX = 4, EQUALS_DEST_INDEX = 1 ;
 
     private Scanner scanner;
 
@@ -58,7 +59,6 @@ public class Parser {
 
     public Command commandType() {
 
-
         if (this.currentLine.matches(A_COMMAND_REGEX)) {
             return Command.A_COMMAND;
         }
@@ -69,6 +69,7 @@ public class Parser {
             return Command.C_COMMAND;
         }
 
+        System.out.println("Didnt recognize any command type");
         return Command.A_COMMAND;
     }
 
@@ -91,17 +92,41 @@ public class Parser {
     }
 
     public String dest() {
-        return "";
+        String destSymbol = "null";
+
+        Matcher matcher = EQUAL_COMMAND_PATTERN.matcher(this.currentLine);
+        if (matcher.matches()) {
+            destSymbol = matcher.group(EQUALS_DEST_INDEX);
+        }
+
+
+        return destSymbol;
     }
 
     public String comp() {
-        return "";
+        String compSymbol = "";
+
+        Matcher matcher = JUMP_COMMAND_PATTERN.matcher(this.currentLine);
+        if (matcher.matches()) {
+            compSymbol = matcher.group(JUMP_COMP_INDEX);
+        }
+        matcher = EQUAL_COMMAND_PATTERN.matcher(this.currentLine);
+        if (matcher.matches()) {
+            compSymbol = matcher.group(EQUALS_COMP_INDEX);
+        }
+        return compSymbol;
     }
 
     public String jump() {
         String jumpSymbol = "null";
+        Matcher matcher;
+
+        matcher = JUMP_COMMAND_PATTERN.matcher(this.currentLine);
+        if (matcher.matches()){
+            jumpSymbol = matcher.group(JUMP_INDEX);
+        }
 
 
-        return "";
+        return jumpSymbol;
     }
 }

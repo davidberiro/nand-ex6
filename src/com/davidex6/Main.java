@@ -10,9 +10,10 @@ public class Main {
             + "/files/";
 
     public static void main(String[] args) throws FileNotFoundException {
-        testRecognizeCommandTypes4();
+        //testJump();
+        //testRecognizeCommandTypes4();
         //testForSymbolMethod();
-        //testRecognizeCommandTypes2();
+        testRecognizeCommandTypes2();
         //testRecognizeCommandTypes1();
         //testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
 
@@ -32,6 +33,16 @@ public class Main {
         parser.advance();
         assertTrue(parser.commandType().equals(Parser.Command.C_COMMAND), "Didn't get an C_COMMAND");
 
+    }
+
+    private static void testJump() throws FileNotFoundException {
+        Parser parser = getParser("jump_tester");
+        parser.advance();
+        System.out.println(parser.jump());
+        System.out.println(parser.comp());
+        parser.advance();
+        System.out.println(parser.jump());
+        System.out.println(parser.comp());
     }
 
     private static void testForSymbolMethod() throws FileNotFoundException {
