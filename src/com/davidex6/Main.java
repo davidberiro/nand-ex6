@@ -10,15 +10,41 @@ public class Main {
             + "/files/";
 
     public static void main(String[] args) throws FileNotFoundException {
-
-        testRecognizeCommandTypes2();
-        testRecognizeCommandTypes1();
-        testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
+        testRecognizeCommandTypes4();
+        //testForSymbolMethod();
+        //testRecognizeCommandTypes2();
+        //testRecognizeCommandTypes1();
+        //testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
 
 
     }
 
+    public static void testRecognizeCommandTypes4() throws FileNotFoundException {
+        Parser parser = getParser("test-reading-file4");
+        parser.advance();
+        assertTrue(!parser.commandType().equals(Parser.Command.C_COMMAND), "Got an C_COMMAND");
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.C_COMMAND), "Didn't get an C_COMMAND");
+        parser.advance();
+        assertTrue(!parser.commandType().equals(Parser.Command.C_COMMAND), "Got an C_COMMAND");
+        parser.advance();
+        assertTrue(!parser.commandType().equals(Parser.Command.C_COMMAND), "Got an C_COMMAND");
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.C_COMMAND), "Didn't get an C_COMMAND");
 
+    }
+
+    private static void testForSymbolMethod() throws FileNotFoundException {
+        Parser parser = getParser("test-reading-file3");
+        parser.advance();
+        System.out.println(parser.symbol());
+        parser.advance();
+        System.out.println(parser.symbol());
+        parser.advance();
+        System.out.println(parser.symbol());
+        parser.advance();
+        System.out.println(parser.symbol());
+    }
 
     private static void testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine() throws FileNotFoundException {
         Parser parser = getParser("test-reading-file");
