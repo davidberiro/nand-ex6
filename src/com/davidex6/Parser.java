@@ -12,6 +12,9 @@ public class Parser {
         L_COMMAND
     };
 
+    private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
+            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)";
+
     private Scanner scanner;
 
     private String currentLine;
@@ -31,7 +34,7 @@ public class Parser {
         }
         while (this.scanner.hasNextLine()) {
             String line = this.scanner.nextLine();
-            boolean isCommentOrWhitespace = line.matches("^\\s*//.*") || line.matches("^\\s*$");
+            boolean isCommentOrWhitespace = line.matches(COMMENT) || line.matches(WHITESPACE);
             if (!isCommentOrWhitespace) {
                 this.currentLine = line;
                 break;
@@ -46,7 +49,11 @@ public class Parser {
     }
 
     public Command commandType() {
-        return Command.A_COMMAND;
+
+        if (this.currentLine.matches(A_COMMAND_REGEX)) {
+            return Command.A_COMMAND;
+        }
+        return Command.C_COMMAND;
     }
 
     public String symbol() {

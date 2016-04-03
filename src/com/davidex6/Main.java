@@ -10,7 +10,8 @@ public class Main {
             + "/files/";
 
     public static void main(String[] args) throws FileNotFoundException {
-        testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
+        //testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
+        testRecognizeCommandTypes();
     }
 
     private static void testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine() throws FileNotFoundException {
@@ -33,5 +34,11 @@ public class Main {
         } else {
             System.out.println("Failure!");
         }
+    }
+
+    private static void testRecognizeCommandTypes() throws FileNotFoundException {
+        Parser parser = new Parser(new File(TEST_FILE_PATHS + "test-reading-file1"));
+        parser.advance();
+        System.out.println(parser.commandType().equals(Parser.Command.A_COMMAND));
     }
 }
