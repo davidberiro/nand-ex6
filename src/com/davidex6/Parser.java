@@ -13,7 +13,7 @@ public class Parser {
     };
 
     private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
-            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)";
+            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)()", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(\\s*)";
 
     private Scanner scanner;
 
@@ -53,6 +53,10 @@ public class Parser {
         if (this.currentLine.matches(A_COMMAND_REGEX)) {
             return Command.A_COMMAND;
         }
+        if (this.currentLine.matches(L_COMMAND_REGEX)) {
+            return Command.L_COMMAND;
+        }
+
         return Command.C_COMMAND;
     }
 

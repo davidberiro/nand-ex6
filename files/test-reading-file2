@@ -1,0 +1,12 @@
+//checking if the parser recognizes L commands
+
+@47
+        //random comment
+
+(LOOP1) //comment after loop
+
+    (LOOP3)
+
+potato
+
+(END)

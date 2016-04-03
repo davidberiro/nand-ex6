@@ -10,8 +10,9 @@ public class Main {
             + "/files/";
 
     public static void main(String[] args) throws FileNotFoundException {
-        //testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
-//        testRecognizeCommandTypes();
+
+        testRecognizeCommandTypes2();
+        testRecognizeCommandTypes1();
         testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
 
 
@@ -20,7 +21,7 @@ public class Main {
 
 
     private static void testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine() throws FileNotFoundException {
-        Parser parser = new Parser(new File(TEST_FILE_PATHS + "test-reading-file"));
+        Parser parser = getParser("test-reading-file");
         System.out.println("Test: Should have one command, repeatedly calling it does not affect the result");
         assertTrue(parser.hasMoreCommands());
         assertTrue(parser.hasMoreCommands());
@@ -33,11 +34,44 @@ public class Main {
         assertTrue(!parser.hasMoreCommands());
     }
 
+    public static void testRecognizeCommandTypes2() throws FileNotFoundException {
+        Parser parser = getParser("test-reading-file2");
+        parser.advance();
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.L_COMMAND), "Didn't get an L_COMMAND");
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.L_COMMAND), "Didn't get an L_COMMAND");
+        parser.advance();
+        assertTrue(!parser.commandType().equals(Parser.Command.A_COMMAND), "Got an L_COMMAND");
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.L_COMMAND), "Didn't get an L_COMMAND");
+
+    }
+
+    public static void testRecognizeCommandTypes1() throws FileNotFoundException {
+        Parser parser = getParser("test-reading-file1");
+        System.out.println("Test: Recognize command types");
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.A_COMMAND), "Didn't get an A_COMMAND");
+        parser.advance();
+        assertTrue(!parser.commandType().equals(Parser.Command.A_COMMAND), "Got an A_COMMAND");
+        parser.advance();
+        assertTrue(parser.commandType().equals(Parser.Command.A_COMMAND), "Didn't get an A_COMMAND");
+    }
+
     private static void assertTrue(boolean v) {
+        assertTrue(v, "");
+    }
+
+    private static void assertTrue(boolean v, String msg) {
         if (v) {
             System.out.println("Success!");
         } else {
-            System.out.println("Failure!");
+            System.out.println("Failure! Reason: " + msg);
         }
+    }
+
+    private static Parser getParser(String fileName) throws FileNotFoundException {
+        return new Parser(new File(TEST_FILE_PATHS + fileName));
     }
 }
