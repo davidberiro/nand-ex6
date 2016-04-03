@@ -10,7 +10,8 @@ public class Main {
             + "/files/";
 
     public static void main(String[] args) throws FileNotFoundException {
-        testRecognizeCommandTypes();
+        //testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
+//        testRecognizeCommandTypes();
         testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
 
 
