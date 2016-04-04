@@ -1,7 +1,15 @@
 package com.davidex6;
+/**
+ * Created by davidberiro on 4/4/16.
+ *
+ * Code class:
+ *		class for getting the binary C_command predefined  
+ *		parts dest, comp and jump.  
+ */
 
 public class Code {
     
+	//check if mnemonic is predefine dest
 	public String dest(String mnemonic) {
         if (mnemonic.equals("null")) {
             return "000";
@@ -30,8 +38,8 @@ public class Code {
         return "ERROR";
     }
 
+	//check if mnemonic is predefine comp
     public String comp(String mnemonic) {
-        String retVal;
         if (mnemonic.equals("0")) {
             return "1110101010";
         }
@@ -137,6 +145,7 @@ public class Code {
         return "ERROR";
     }
 
+    //check if mnemonic is predefine jump
     public String jump(String mnemonic) {
         if (mnemonic.equals("null")) {
             return "000";

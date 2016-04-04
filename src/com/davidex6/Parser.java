@@ -5,6 +5,14 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.regex.*;
 
+/**
+ * Parser Class
+ * This class uses javas built in regex to parse a file into its separate components, specifically
+ * into L,C, and A commands, as well as into the different arguments for each command, such as dest, comp, jump,
+ * and symbol
+ */
+
+
 public class Parser {
 
     public enum Command {
@@ -13,22 +21,35 @@ public class Parser {
         L_COMMAND
     };
 
-    private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
-            A_COMMAND_REGEX = "(^\\s*)([@])([^\\s]+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(.+)([)])(.*)",
-            EQUALS ="(^\\s*)(D|M|A|AM|MD|AD)(=)([^\\s]+)(\\s*)(.*)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)(\\s*)(.*)",
+    //All the needed regex' and patterns
+    private static final String
+            COMMENT = "^\\s*//.*",
+            WHITESPACE = "^\\s*$",
+            A_COMMAND_REGEX = "(^\\s*)([@])([^\\s]+)(\\s*)",
+            L_COMMAND_REGEX = "(^\\s*)([(])(.+)([)])(.*)",
+            EQUALS ="(^\\s*)(D|M|A|AM|MD|AD)(=)([^\\s]+)(\\s*)(.*)",
+            JUMP = "(^\\s*)(\\w+)(;)(\\w+)(\\s*)(.*)",
             C_COMMAND_REGEX = EQUALS + "|" + JUMP;
 
-    private static final Pattern A_COMMAND_PATTERN = Pattern.compile(A_COMMAND_REGEX),
+    private static final Pattern
+            A_COMMAND_PATTERN = Pattern.compile(A_COMMAND_REGEX),
             L_COMMAND_PATTERN = Pattern.compile(L_COMMAND_REGEX),
-            EQUAL_COMMAND_PATTERN = Pattern.compile(EQUALS), JUMP_COMMAND_PATTERN = Pattern.compile(JUMP);
+            EQUAL_COMMAND_PATTERN = Pattern.compile(EQUALS),
+            JUMP_COMMAND_PATTERN = Pattern.compile(JUMP);
 
-    private static final int A_COMMAND_SYMBOL_INDEX = 3, L_COMMAND_SYMBOL_INDEX = 3, JUMP_INDEX = 4,
-                            JUMP_COMP_INDEX = 2, EQUALS_COMP_INDEX = 4, EQUALS_DEST_INDEX = 2 ;
+    private static final int
+            A_COMMAND_SYMBOL_INDEX = 3,
+            L_COMMAND_SYMBOL_INDEX = 3,
+            JUMP_INDEX = 4,
+            JUMP_COMP_INDEX = 2,
+            EQUALS_COMP_INDEX = 4,
+            EQUALS_DEST_INDEX = 2 ;
 
     private Scanner scanner;
 
     private String currentLine;
 
+    //initializing our scanner for the given file
     public Parser(File file) throws FileNotFoundException {
         this.scanner = new Scanner(file);
     }
@@ -37,15 +58,7 @@ public class Parser {
         return this.currentLine;
     }
 
-    public boolean hasMoreCommands() {
-        this.readIntoCurrentLineSkippingWhitespaceAndCommentLines();
-        if (this.currentLine == null){
-            return false;
-        }
-        return true;
-
-    }
-
+    //Allows us to skip all lines which are comments or whitespaces
     private void readIntoCurrentLineSkippingWhitespaceAndCommentLines() {
         if (this.currentLine != null) {
             return;
@@ -60,12 +73,13 @@ public class Parser {
         }
     }
 
-
+    //Advances to the next command in the text file
     public void advance() {
         this.currentLine = null;
         this.readIntoCurrentLineSkippingWhitespaceAndCommentLines();
     }
 
+    //Returns the command type of the current command (line of code)
     public Command commandType() {
 
         if (this.currentLine.matches(A_COMMAND_REGEX)) {
@@ -78,6 +92,7 @@ public class Parser {
 
     }
 
+    //Returns the symbol of an A or L command
     public String symbol() {
         String commandSymbol = "";
         Matcher matcher;
@@ -95,6 +110,7 @@ public class Parser {
 
     }
 
+    //Returns the destination field of a C command
     public String dest() {
         String destSymbol = "null";
 
@@ -106,6 +122,7 @@ public class Parser {
         return destSymbol;
     }
 
+    //Returns the comp destination field of a C command
     public String comp() {
         String compSymbol = "";
 
@@ -120,6 +137,7 @@ public class Parser {
         return compSymbol;
     }
 
+    //Returns the jump destination of a given C command
     public String jump() {
         String jumpSymbol = "null";
         Matcher matcher;
