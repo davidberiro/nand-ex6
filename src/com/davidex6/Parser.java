@@ -15,7 +15,8 @@ public class Parser {
 
     private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
             A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(.*$)",
-            EQUALS ="(^\\s*)(D|M|A)(=)(.+)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)", C_COMMAND_REGEX = EQUALS + "|" + JUMP;
+            EQUALS ="(^\\s*)(D|M|A)(=)(.+)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)", C_COMMAND_REGEX = EQUALS + "|" + JUMP,
+            D_COMMAND_REGEX = "(^\\s*)(\\w*)([=]?)(\\w+)([;]?)(\\w+)";
 
     private static final Pattern A_COMMAND_PATTERN = Pattern.compile(A_COMMAND_REGEX),
             L_COMMAND_PATTERN = Pattern.compile(L_COMMAND_REGEX), C_COMMAND_PATTERN = Pattern.compile(C_COMMAND_REGEX),
