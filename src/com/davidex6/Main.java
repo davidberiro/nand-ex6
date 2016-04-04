@@ -20,7 +20,7 @@ public class Main {
         //testJump();
         //testRecognizeCommandTypes4();
         //testForSymbolMethod();
-        testRecognizeCommandTypes2();
+        //testRecognizeCommandTypes2();
         //testRecognizeCommandTypes1();
         //testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine();
 
@@ -55,21 +55,26 @@ public class Main {
         BufferedWriter buffer = buildBuffer(args[0]);
 
 
-        //File infile = new File(args[0]); //check what is the input for main
+        File infile = new File(args[0]); //check what is the input for main
 
         //first pass:
         //Parser parser = new Parser(infile);
         Parser parser = getParser(args[0]);
         String Lsymbol;
         int lineCounter = 0;
-        while(parser.hasMoreCommands()){
-            parser.advance();
-            if(parser.commandType() == Parser.Command.L_COMMAND){
+        parser.advance();
+        String line = parser.currentLine();
+        while (line != null) {
+            System.out.println(line);
+            if (parser.commandType() == Parser.Command.L_COMMAND){
                 Lsymbol = parser.symbol();
                 symbolTable.addEntry(Lsymbol,String.valueOf(lineCounter));
             }
-            else
+            else {
                 lineCounter++;
+            }
+            parser.advance();
+            line = parser.currentLine();
         }
 
         //second pass:
@@ -78,8 +83,9 @@ public class Main {
         String ACsymbol;
         String output = null;
         int freeSpace = 16;
-        while(parser.hasMoreCommands()){
-            parser.advance();
+        parser.advance();
+        line = parser.currentLine();
+        while(line != null){
 
             if(parser.commandType() == Parser.Command.A_COMMAND){
                 ACsymbol = parser.symbol();
@@ -110,6 +116,9 @@ public class Main {
             }
             // write the output to the out file
             writeToBuffer(output, buffer);
+
+            parser.advance();
+            line = parser.currentLine();
         }
         // close the buffer
         try {

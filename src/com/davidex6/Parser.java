@@ -14,7 +14,7 @@ public class Parser {
     };
 
     private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
-            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(.*$)",
+            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(.*)",
             EQUALS ="(^\\s*)(D|M|A)(=)(.+)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)", C_COMMAND_REGEX = EQUALS + "|" + JUMP,
             D_COMMAND_REGEX = "(^\\s*)(\\w*)([=]?)(\\w+)([;]?)(\\w+)";
 
@@ -23,7 +23,7 @@ public class Parser {
             EQUAL_COMMAND_PATTERN = Pattern.compile(EQUALS), JUMP_COMMAND_PATTERN = Pattern.compile(JUMP);
 
     private static final int A_COMMAND_SYMBOL_INDEX = 3, L_COMMAND_SYMBOL_INDEX = 3, JUMP_INDEX = 4,
-                            JUMP_COMP_INDEX = 2, EQUALS_COMP_INDEX = 4, EQUALS_DEST_INDEX = 1 ;
+                            JUMP_COMP_INDEX = 2, EQUALS_COMP_INDEX = 4, EQUALS_DEST_INDEX = 2 ;
 
     private Scanner scanner;
 
@@ -33,9 +33,18 @@ public class Parser {
         this.scanner = new Scanner(file);
     }
 
+    public String currentLine() {
+        return this.currentLine;
+    }
+
     public boolean hasMoreCommands() {
         this.readIntoCurrentLineSkippingWhitespaceAndCommentLines();
-        return this.currentLine != null;
+        System.out.println(this.currentLine);
+        if (this.currentLine == null){
+            return false;
+        }
+        return true;
+
     }
 
     private void readIntoCurrentLineSkippingWhitespaceAndCommentLines() {
@@ -87,7 +96,7 @@ public class Parser {
         if (matcher.matches()){
             commandSymbol = matcher.group(L_COMMAND_SYMBOL_INDEX);
         }
-
+        //System.out.println("Command Symbol: " + commandSymbol);
         return commandSymbol;
 
     }
@@ -100,7 +109,7 @@ public class Parser {
             destSymbol = matcher.group(EQUALS_DEST_INDEX);
         }
 
-
+        //System.out.println("Dest Symbol: " + destSymbol);
         return destSymbol;
     }
 
@@ -115,6 +124,7 @@ public class Parser {
         if (matcher.matches()) {
             compSymbol = matcher.group(EQUALS_COMP_INDEX);
         }
+        //System.out.println("Comp Symbol: " + compSymbol);
         return compSymbol;
     }
 
@@ -127,7 +137,7 @@ public class Parser {
             jumpSymbol = matcher.group(JUMP_INDEX);
         }
 
-
+        //System.out.println("Jump Symbol: " + jumpSymbol);
         return jumpSymbol;
     }
 }
