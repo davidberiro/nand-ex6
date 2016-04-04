@@ -14,12 +14,12 @@ public class Parser {
     };
 
     private static final String COMMENT = "^\\s*//.*", WHITESPACE = "^\\s*$",
-            A_COMMAND_REGEX = "(^\\s*)([@])(\\w+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(\\w+)([)])(.*)",
-            EQUALS ="(^\\s*)(D|M|A)(=)(.+)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)", C_COMMAND_REGEX = EQUALS + "|" + JUMP,
-            D_COMMAND_REGEX = "(^\\s*)(\\w*)([=]?)(\\w+)([;]?)(\\w+)";
+            A_COMMAND_REGEX = "(^\\s*)([@])([^\\s]+)(\\s*)", L_COMMAND_REGEX = "(^\\s*)([(])(.+)([)])(.*)",
+            EQUALS ="(^\\s*)(D|M|A|AM|MD|AD)(=)([^\\s]+)(\\s*)(.*)", JUMP = "(^\\s*)(\\w+)(;)(\\w+)(\\s*)(.*)",
+            C_COMMAND_REGEX = EQUALS + "|" + JUMP;
 
     private static final Pattern A_COMMAND_PATTERN = Pattern.compile(A_COMMAND_REGEX),
-            L_COMMAND_PATTERN = Pattern.compile(L_COMMAND_REGEX), C_COMMAND_PATTERN = Pattern.compile(C_COMMAND_REGEX),
+            L_COMMAND_PATTERN = Pattern.compile(L_COMMAND_REGEX),
             EQUAL_COMMAND_PATTERN = Pattern.compile(EQUALS), JUMP_COMMAND_PATTERN = Pattern.compile(JUMP);
 
     private static final int A_COMMAND_SYMBOL_INDEX = 3, L_COMMAND_SYMBOL_INDEX = 3, JUMP_INDEX = 4,
@@ -39,7 +39,6 @@ public class Parser {
 
     public boolean hasMoreCommands() {
         this.readIntoCurrentLineSkippingWhitespaceAndCommentLines();
-        System.out.println(this.currentLine);
         if (this.currentLine == null){
             return false;
         }
@@ -72,15 +71,11 @@ public class Parser {
         if (this.currentLine.matches(A_COMMAND_REGEX)) {
             return Command.A_COMMAND;
         }
-        if (this.currentLine.matches(L_COMMAND_REGEX)) {
+        else if (this.currentLine.matches(L_COMMAND_REGEX)) {
             return Command.L_COMMAND;
         }
-        if (this.currentLine.matches(C_COMMAND_REGEX)) {
-            return Command.C_COMMAND;
-        }
+        return Command.C_COMMAND;
 
-        System.out.println("Didnt recognize any command type");
-        return Command.A_COMMAND;
     }
 
     public String symbol() {
@@ -96,7 +91,6 @@ public class Parser {
         if (matcher.matches()){
             commandSymbol = matcher.group(L_COMMAND_SYMBOL_INDEX);
         }
-        //System.out.println("Command Symbol: " + commandSymbol);
         return commandSymbol;
 
     }
@@ -109,7 +103,6 @@ public class Parser {
             destSymbol = matcher.group(EQUALS_DEST_INDEX);
         }
 
-        //System.out.println("Dest Symbol: " + destSymbol);
         return destSymbol;
     }
 
@@ -124,7 +117,6 @@ public class Parser {
         if (matcher.matches()) {
             compSymbol = matcher.group(EQUALS_COMP_INDEX);
         }
-        //System.out.println("Comp Symbol: " + compSymbol);
         return compSymbol;
     }
 
@@ -137,7 +129,6 @@ public class Parser {
             jumpSymbol = matcher.group(JUMP_INDEX);
         }
 
-        //System.out.println("Jump Symbol: " + jumpSymbol);
         return jumpSymbol;
     }
 }

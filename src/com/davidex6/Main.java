@@ -65,10 +65,13 @@ public class Main {
         parser.advance();
         String line = parser.currentLine();
         while (line != null) {
-            System.out.println(line);
             if (parser.commandType() == Parser.Command.L_COMMAND){
                 Lsymbol = parser.symbol();
-                symbolTable.addEntry(Lsymbol,String.valueOf(lineCounter));
+                String output = Integer.toBinaryString(lineCounter);
+                int rep = 16 - output.length();
+                String zeros = new String(new char[rep]).replace("\0", "0");
+                output = zeros + output;
+                symbolTable.addEntry(Lsymbol,String.valueOf(output));
             }
             else {
                 lineCounter++;
@@ -80,41 +83,58 @@ public class Main {
         //second pass:
         //parser = new Parser(infile);
         parser = getParser(args[0]);
-        String ACsymbol;
+        String ACsymbol = null;
         String output = null;
         int freeSpace = 16;
         parser.advance();
         line = parser.currentLine();
         while(line != null){
-
+            System.out.println(line);
             if(parser.commandType() == Parser.Command.A_COMMAND){
                 ACsymbol = parser.symbol();
-                int toInt;
                 if (Character.isDigit(ACsymbol.charAt(0))){
-                    toInt = Integer.parseInt(ACsymbol);
+                    int toInt = Integer.parseInt(ACsymbol);
+                    output = Integer.toBinaryString(toInt);
+                    int rep = 16 - output.length();
+                    String zeros = new String(new char[rep]).replace("\0", "0");
+                    output = zeros + output;
+
                 }
                 else{
                     if(!symbolTable.contains(ACsymbol)){
                         // add new symbol to the table
-                        symbolTable.addEntry(ACsymbol, String.valueOf(freeSpace));
+                        int toInt = Integer.parseInt(String.valueOf(freeSpace));
+                        output = Integer.toBinaryString(toInt);
+                        int rep = 16 - output.length();
+                        String zeros = new String(new char[rep]).replace("\0", "0");
+                        output = zeros + output;
+                        symbolTable.addEntry(ACsymbol, output);
                         freeSpace++;
+
                     }
-                    String address = symbolTable.GetAddress(ACsymbol);
-                    toInt = Integer.parseInt(address);
+                    else {
+                        output = symbolTable.GetAddress(ACsymbol);
+                    }
+
+                    //toInt = Integer.parseInt(address);
+                    //System.out.println(toInt);
                 }
                 // convert to binary and padd with zeros
-                output = Integer.toBinaryString(toInt);
-                int rep = 16 - output.length();
-                String zeros = new String(new char[rep]).replace("\0", "0");
-                output = zeros + output;
+
+
             }
 
             if(parser.commandType() == Parser.Command.C_COMMAND){
                 Code code = new Code();
-                output = "1" + code.comp(parser.comp()) + code.dest(parser.dest())
+                output = code.comp(parser.comp()) + code.dest(parser.dest())
                         + code.jump(parser.jump());
             }
             // write the output to the out file
+
+            if (parser.commandType() == Parser.Command.L_COMMAND){
+                parser.advance();
+                continue;
+            }
             writeToBuffer(output, buffer);
 
             parser.advance();
@@ -159,96 +179,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-
-    public static void testRecognizeCommandTypes4() throws FileNotFoundException {
-        Parser parser = getParser("test-reading-file4");
-        parser.advance();
-        assertTrue(!parser.commandType().equals(Parser.Command.C_COMMAND), "Got an C_COMMAND");
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.C_COMMAND), "Didn't get an C_COMMAND");
-        parser.advance();
-        assertTrue(!parser.commandType().equals(Parser.Command.C_COMMAND), "Got an C_COMMAND");
-        parser.advance();
-        assertTrue(!parser.commandType().equals(Parser.Command.C_COMMAND), "Got an C_COMMAND");
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.C_COMMAND), "Didn't get an C_COMMAND");
-
-    }
-
-    private static void testJump() throws FileNotFoundException {
-        Parser parser = getParser("jump_tester");
-        parser.advance();
-        System.out.println(parser.jump());
-        System.out.println(parser.comp());
-        parser.advance();
-        System.out.println(parser.jump());
-        System.out.println(parser.comp());
-    }
-
-    private static void testForSymbolMethod() throws FileNotFoundException {
-        Parser parser = getParser("test-reading-file3");
-        parser.advance();
-        System.out.println(parser.symbol());
-        parser.advance();
-        System.out.println(parser.symbol());
-        parser.advance();
-        System.out.println(parser.symbol());
-        parser.advance();
-        System.out.println(parser.symbol());
-    }
-
-    private static void testHasMoreCommandsSkipsWhitespaceAndReturnsTrueOnNewLine() throws FileNotFoundException {
-        Parser parser = getParser("test-reading-file");
-        System.out.println("Test: Should have one command, repeatedly calling it does not affect the result");
-        assertTrue(parser.hasMoreCommands());
-        assertTrue(parser.hasMoreCommands());
-        assertTrue(parser.hasMoreCommands());
-        parser.advance();
-        assertTrue(parser.hasMoreCommands());
-        parser.advance();
-        assertTrue(parser.hasMoreCommands());
-        parser.advance();
-        assertTrue(!parser.hasMoreCommands());
-    }
-
-    public static void testRecognizeCommandTypes2() throws FileNotFoundException {
-        Parser parser = getParser("test-reading-file2");
-        parser.advance();
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.L_COMMAND), "Didn't get an L_COMMAND");
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.L_COMMAND), "Didn't get an L_COMMAND");
-        parser.advance();
-        assertTrue(!parser.commandType().equals(Parser.Command.A_COMMAND), "Got an L_COMMAND");
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.L_COMMAND), "Didn't get an L_COMMAND");
-
-    }
-
-    public static void testRecognizeCommandTypes1() throws FileNotFoundException {
-        Parser parser = getParser("test-reading-file1");
-        System.out.println("Test: Recognize command types");
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.A_COMMAND), "Didn't get an A_COMMAND");
-        parser.advance();
-        assertTrue(!parser.commandType().equals(Parser.Command.A_COMMAND), "Got an A_COMMAND");
-        parser.advance();
-        assertTrue(parser.commandType().equals(Parser.Command.A_COMMAND), "Didn't get an A_COMMAND");
-    }
-
-    private static void assertTrue(boolean v) {
-        assertTrue(v, "");
-    }
-
-    private static void assertTrue(boolean v, String msg) {
-        if (v) {
-            System.out.println("Success!");
-        } else {
-            System.out.println("Failure! Reason: " + msg);
-        }
-    }
-
+    
     private static Parser getParser(String fileName) throws FileNotFoundException {
         return new Parser(new File(TEST_FILE_PATHS + fileName));
     }
